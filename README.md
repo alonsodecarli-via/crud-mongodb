@@ -189,6 +189,7 @@ spring.data.mongodb.uri=mongodb+srv://alonsodecarli_db_user:3YVmKaj8OzuEFJZb@clu
 logging.level.org.springframework.data.mongodb.core.MongoTemplate=DEBUG
 ```
 
+## 📚 Fortalecendo o Conhecimento
 Vamos entender melhor cada propriedade adicionada no `application.properties`:
 * `spring.application.name=crud-mongodb`: Define o nome da aplicação Spring Boot.
 * `server.port=8080`: Configura a porta em que o servidor irá rodar.
@@ -206,30 +207,36 @@ Vamos entender melhor cada propriedade adicionada no `application.properties`:
 
 # 3️⃣ Modelagem da Entidade (Document)
 
-```java
-package com.example.aula9.model;
+* Criando a entidade `Produto` na pasta `model`:
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-import java.math.BigDecimal;
+    ```java
+    package com.example.aula9.model;
 
-@Document(collection = "produtos")
-public record Produto(
-        @Id String id,
-        String nome,
-        String ncm,
-        String descricaoNcm,
-        BigDecimal preco,
-        Integer quantidade
-) {}
+    import org.springframework.data.annotation.Id;
+    import org.springframework.data.mongodb.core.mapping.Document;
+    import java.math.BigDecimal;
+
+    @Document(collection = "produtos")
+    public record Produto(
+            @Id String id,
+            String nome,
+            String ncm,
+            String descricaoNcm,
+            BigDecimal preco,
+            Integer quantidade
+    ) {}
+    ```
+
+    <img src="images/crud-mongodb-model.png" alt="CRUD MongoDB Model">
 
 
 
-* 📝 Entendendo as Anotações:
+
+## 📚 Fortalecendo o Conhecimento
     * `@Document(collection = "produtos")`: Indica que essa classe representa um documento na coleção `produtos` do MongoDB.
     * `@Id`: Marca o campo `id` como o identificador único do documento no MongoDB.
 
-```
+
 
 ---
 <br>
@@ -238,155 +245,203 @@ public record Produto(
 
 ## DTO de entrada
 
-```java
-public record ProdutoRequest(
-        String nome,
-        String ncm,
-        String descricaoNcm,
-        BigDecimal preco,
-        Integer quantidade
-) {}
-```
+* Criando o DTO `ProdutoRequest` na pasta `dto`:
+
+    ```java
+    public record ProdutoRequest(
+            String nome,
+            String ncm,
+            String descricaoNcm,
+            BigDecimal preco,
+            Integer quantidade
+    ) {}
+    ```
+
+    <img src="images/crud-mongodb-dtorequest.png" alt="CRUD MongoDB DTO Request">
+
 
 ## DTO de saída
 
-```java
-public record ProdutoResponse(
-        String id,
-        String nome,
-        String ncm,
-        String descricaoNcm,
-        BigDecimal preco,
-        Integer quantidade
-) {}
-```
+* Criando o DTO `ProdutoResponse` na pasta `dto`:
+
+    ```java
+    public record ProdutoResponse(
+            String id,
+            String nome,
+            String ncm,
+            String descricaoNcm,
+            BigDecimal preco,
+            Integer quantidade
+    ) {}
+    ```
+
+    <img src="images/crud-mongodb-dtoresponse.png" alt="CRUD MongoDB DTO Response">
+
 
 ## Mapper
 
-```java
-@Component
-public class ProdutoMapper {
+* Criando a classe `ProdutoMapper` na pasta `mapper`:
+    ```java
+    @Component
+    public class ProdutoMapper {
 
-    public Produto toEntity(ProdutoRequest dto) {
-        return new Produto(null,
-                dto.nome(),
-                dto.ncm(),
-                dto.descricaoNcm(),
-                dto.preco(),
-                dto.quantidade());
-    }
+        public Produto toEntity(ProdutoRequest dto) {
+            return new Produto(null,
+                    dto.nome(),
+                    dto.ncm(),
+                    dto.descricaoNcm(),
+                    dto.preco(),
+                    dto.quantidade());
+        }
 
-    public ProdutoResponse toResponse(Produto entity) {
-        return new ProdutoResponse(
-                entity.id(),
-                entity.nome(),
-                entity.ncm(),
-                entity.descricaoNcm(),
-                entity.preco(),
-                entity.quantidade());
+        public ProdutoResponse toResponse(Produto entity) {
+            return new ProdutoResponse(
+                    entity.id(),
+                    entity.nome(),
+                    entity.ncm(),
+                    entity.descricaoNcm(),
+                    entity.preco(),
+                    entity.quantidade());
+        }
     }
-}
-```
+    ```
+
+    <img src="images/crud-mongodb-mapper.png" alt="CRUD MongoDB Mapper">
+
+
+## 📚 Fortalecendo o Conhecimento
+* **DTOs (Data Transfer Objects)**: São utilizados para transferir dados entre diferentes camadas da aplicação, como entre o controlador e o serviço. Eles ajudam a evitar expor diretamente as entidades do banco de dados.
+* **Mapper**: Classe responsável por converter entre entidades e DTOs. Isso facilita a manutenção do código e a separação de responsabilidades.
+
+
 
 ---
 <br>
 
 # 5️⃣ Repositório com Spring Data
 
-```java
-@Repository
-public interface ProdutoRepository extends MongoRepository<Produto, String> {
-}
-```
+* Criando o repositório `ProdutoRepository` na pasta `repository`:
+
+    ```java
+    @Repository
+    public interface ProdutoRepository extends MongoRepository<Produto, String> {
+    }
+    ```
+
+    <img src="images/crud-mongodb-repository.png" alt="CRUD MongoDB Repository">
+
+
+## 📚 Fortalecendo o Conhecimento
+* **MongoRepository**: Interface do Spring Data MongoDB que fornece métodos CRUD prontos para uso, como `save`, `findAll`, `findById`, `deleteById`, entre outros.  
+
+
 
 ---
 <br>
 
 # 6️⃣ Serviço de Negócio
 
-```java
-@Service
-@RequiredArgsConstructor
-public class ProdutoService {
+* Criando a classe `ProdutoService` na pasta `service`:
 
-    private final ProdutoRepository repository;
+    ```java
+    @Service
+    @RequiredArgsConstructor
+    public class ProdutoService {
 
-    public Produto criar(Produto produto) {
-        return repository.save(produto);
+        private final ProdutoRepository repository;
+
+        public Produto criar(Produto produto) {
+            return repository.save(produto);
+        }
+
+        public List<Produto> listar() {
+            return repository.findAll();
+        }
+
+        public Produto buscarPorId(String id) {
+            return repository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
+        }
+
+        public Produto atualizar(String id, Produto produto) {
+            buscarPorId(id);
+            Produto atualizado = new Produto(
+                    id,
+                    produto.nome(),
+                    produto.ncm(),
+                    produto.descricaoNcm(),
+                    produto.preco(),
+                    produto.quantidade());
+
+            return repository.save(atualizado);
+        }
+
+        public void deletar(String id) {
+            buscarPorId(id);
+            repository.deleteById(id);
+        }
     }
+    ```
 
-    public List<Produto> listar() {
-        return repository.findAll();
-    }
+    <img src="images/crud-mongodb-service.png" alt="CRUD MongoDB Service">
 
-    public Produto buscarPorId(String id) {
-        return repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
-    }
 
-    public Produto atualizar(String id, Produto produto) {
-        buscarPorId(id);
-        Produto atualizado = new Produto(
-                id,
-                produto.nome(),
-                produto.ncm(),
-                produto.descricaoNcm(),
-                produto.preco(),
-                produto.quantidade());
+## 📚 Fortalecendo o Conhecimento
+* **Serviço de Negócio**: Camada responsável por implementar a lógica de negócio da aplicação. Ela interage com o repositório para realizar operações de CRUD e pode incluir validações e regras específicas.
 
-        return repository.save(atualizado);
-    }
 
-    public void deletar(String id) {
-        buscarPorId(id);
-        repository.deleteById(id);
-    }
-}
-```
 
 ---
 <br>
 
-# 7️⃣ Controller REST (CRUD Completo)
+# 7️⃣ Controller REST 
 
-```java
-@RestController
-@RequestMapping("/api/produtos")
-@RequiredArgsConstructor
-public class ProdutoController {
+* Criando a classe `ProdutoController` na pasta `controller`:
 
-    private final ProdutoService service;
-    private final ProdutoMapper mapper;
+    ```java
+    @RestController
+    @RequestMapping("/api/produtos")
+    @RequiredArgsConstructor
+    public class ProdutoController {
 
-    @PostMapping
-    public ResponseEntity<ProdutoResponse> criar(@RequestBody ProdutoRequest request) {
-        Produto criado = service.criar(mapper.toEntity(request));
-        return ResponseEntity.status(201).body(mapper.toResponse(criado));
+        private final ProdutoService service;
+        private final ProdutoMapper mapper;
+
+        @PostMapping
+        public ResponseEntity<ProdutoResponse> criar(@RequestBody ProdutoRequest request) {
+            Produto criado = service.criar(mapper.toEntity(request));
+            return ResponseEntity.status(201).body(mapper.toResponse(criado));
+        }
+
+        @GetMapping
+        public List<ProdutoResponse> listar() {
+            return service.listar().stream().map(mapper::toResponse).toList();
+        }
+
+        @GetMapping("/{id}")
+        public ProdutoResponse buscar(@PathVariable String id) {
+            return mapper.toResponse(service.buscarPorId(id));
+        }
+
+        @PutMapping("/{id}")
+        public ProdutoResponse atualizar(@PathVariable String id,
+                                        @RequestBody ProdutoRequest request) {
+            return mapper.toResponse(service.atualizar(id, mapper.toEntity(request)));
+        }
+
+        @DeleteMapping("/{id}")
+        public ResponseEntity<Void> deletar(@PathVariable String id) {
+            service.deletar(id);
+            return ResponseEntity.noContent().build();
+        }
     }
+    ```
 
-    @GetMapping
-    public List<ProdutoResponse> listar() {
-        return service.listar().stream().map(mapper::toResponse).toList();
-    }
+    <img src="images/crud-mongodb-controller.png" alt="CRUD MongoDB Controller">
 
-    @GetMapping("/{id}")
-    public ProdutoResponse buscar(@PathVariable String id) {
-        return mapper.toResponse(service.buscarPorId(id));
-    }
+## 📚 Fortalecendo o Conhecimento    
+* **Controller REST**: Camada responsável por expor os endpoints da API. Ela recebe as requisições HTTP, chama o serviço de negócio e retorna as respostas apropriadas.
 
-    @PutMapping("/{id}")
-    public ProdutoResponse atualizar(@PathVariable String id,
-                                     @RequestBody ProdutoRequest request) {
-        return mapper.toResponse(service.atualizar(id, mapper.toEntity(request)));
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletar(@PathVariable String id) {
-        service.deletar(id);
-        return ResponseEntity.noContent().build();
-    }
-}
-```
 
 ---
 
