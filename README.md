@@ -248,6 +248,10 @@ Vamos entender melhor cada propriedade adicionada no `application.properties`:
 * Criando o DTO `ProdutoRequest` na pasta `dto`:
 
     ```java
+    package br.com.casasbahia.crud_mongodb.dto;
+
+    import java.math.BigDecimal;
+
     public record ProdutoRequest(
             String nome,
             String ncm,
@@ -265,6 +269,10 @@ Vamos entender melhor cada propriedade adicionada no `application.properties`:
 * Criando o DTO `ProdutoResponse` na pasta `dto`:
 
     ```java
+    package br.com.casasbahia.crud_mongodb.dto;
+
+    import java.math.BigDecimal;
+
     public record ProdutoResponse(
             String id,
             String nome,
@@ -282,16 +290,25 @@ Vamos entender melhor cada propriedade adicionada no `application.properties`:
 
 * Criando a classe `ProdutoMapper` na pasta `mapper`:
     ```java
+    package br.com.casasbahia.crud_mongodb.mapper;
+
+    import br.com.casasbahia.crud_mongodb.dto.ProdutoRequest;
+    import br.com.casasbahia.crud_mongodb.dto.ProdutoResponse;
+    import br.com.casasbahia.crud_mongodb.model.Produto;
+    import org.springframework.stereotype.Component;
+
     @Component
     public class ProdutoMapper {
 
         public Produto toEntity(ProdutoRequest dto) {
-            return new Produto(null,
+            return new Produto(
+                    null,
                     dto.nome(),
                     dto.ncm(),
                     dto.descricaoNcm(),
                     dto.preco(),
-                    dto.quantidade());
+                    dto.quantidade()
+            );
         }
 
         public ProdutoResponse toResponse(Produto entity) {
@@ -301,7 +318,8 @@ Vamos entender melhor cada propriedade adicionada no `application.properties`:
                     entity.ncm(),
                     entity.descricaoNcm(),
                     entity.preco(),
-                    entity.quantidade());
+                    entity.quantidade()
+            );
         }
     }
     ```
@@ -323,6 +341,12 @@ Vamos entender melhor cada propriedade adicionada no `application.properties`:
 * Criando o repositório `ProdutoRepository` na pasta `repository`:
 
     ```java
+    package br.com.casasbahia.crud_mongodb.repository;
+
+    import br.com.casasbahia.crud_mongodb.model.Produto;
+    import org.springframework.data.mongodb.repository.MongoRepository;
+    import org.springframework.stereotype.Repository;
+
     @Repository
     public interface ProdutoRepository extends MongoRepository<Produto, String> {
     }
@@ -344,6 +368,15 @@ Vamos entender melhor cada propriedade adicionada no `application.properties`:
 * Criando a classe `ProdutoService` na pasta `service`:
 
     ```java
+    package br.com.casasbahia.crud_mongodb.service;
+
+    import br.com.casasbahia.crud_mongodb.model.Produto;
+    import br.com.casasbahia.crud_mongodb.repository.ProdutoRepository;
+    import lombok.RequiredArgsConstructor;
+    import org.springframework.stereotype.Service;
+
+    import java.util.List;
+
     @Service
     @RequiredArgsConstructor
     public class ProdutoService {
@@ -371,8 +404,8 @@ Vamos entender melhor cada propriedade adicionada no `application.properties`:
                     produto.ncm(),
                     produto.descricaoNcm(),
                     produto.preco(),
-                    produto.quantidade());
-
+                    produto.quantidade()
+            );
             return repository.save(atualizado);
         }
 
