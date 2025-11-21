@@ -525,6 +525,23 @@ http://localhost:8080/swagger-ui/index.html
 <br>
 
 
+## Visualizando o Registro no MongoDB Atlas
+O **Data Explorer** do MongoDB Atlas permite visualizar e gerenciar os dados armazenados no banco de dados de forma intuitiva.
+* Acesse o MongoDB Atlas e visualize o documento inserido na coleção `produtos` do banco `produtosdb`:
+
+    <img src="images/mongodb-atlas5.png" alt="MongoDB Atlas">
+
+
+
+
+## 📚 Fortalecendo o Conhecimento
+* O Swagger/OpenAPI facilita a documentação e testes dos endpoints da API.
+* A interface interativa permite enviar requisições diretamente do navegador, tornando o processo de desenvolvimento mais ágil e eficiente.
+* A documentação gerada automaticamente ajuda na comunicação entre equipes e na integração com outras aplicações.
+
+
+<br>
+
 ---
 
 # 9️⃣ Estrutura Final do Projeto
