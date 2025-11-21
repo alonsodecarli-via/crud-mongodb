@@ -210,7 +210,7 @@ Vamos entender melhor cada propriedade adicionada no `application.properties`:
 * Criando a entidade `Produto` na pasta `model`:
 
     ```java
-    package com.example.aula9.model;
+    package br.com.casasbahia.crud_mongodb.model;
 
     import org.springframework.data.annotation.Id;
     import org.springframework.data.mongodb.core.mapping.Document;
@@ -432,6 +432,19 @@ Vamos entender melhor cada propriedade adicionada no `application.properties`:
 * Criando a classe `ProdutoController` na pasta `controller`:
 
     ```java
+    package br.com.casasbahia.crud_mongodb.controller;
+
+    import br.com.casasbahia.crud_mongodb.dto.ProdutoRequest;
+    import br.com.casasbahia.crud_mongodb.dto.ProdutoResponse;
+    import br.com.casasbahia.crud_mongodb.mapper.ProdutoMapper;
+    import br.com.casasbahia.crud_mongodb.model.Produto;
+    import br.com.casasbahia.crud_mongodb.service.ProdutoService;
+    import lombok.RequiredArgsConstructor;
+    import org.springframework.http.ResponseEntity;
+    import org.springframework.web.bind.annotation.*;
+
+    import java.util.List;
+
     @RestController
     @RequestMapping("/api/produtos")
     @RequiredArgsConstructor
@@ -491,6 +504,13 @@ http://localhost:8080/swagger-ui/index.html
 * Se desejar personalizar:
 
     ```java
+    package br.com.casasbahia.crud_mongodb.config;
+
+    import io.swagger.v3.oas.models.OpenAPI;
+    import io.swagger.v3.oas.models.info.Info;
+    import org.springframework.context.annotation.Bean;
+    import org.springframework.context.annotation.Configuration;
+
     @Configuration
     public class SwaggerConfig {
         @Bean
